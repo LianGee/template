@@ -19,7 +19,7 @@ class Response:
     @staticmethod
     def convert_data(data):
         if isinstance(data, BaseModel):
-            return data.get_json()
+            return data.to_dict()
         if isinstance(data, list) and all(isinstance(d, BaseModel) for d in data):
             return [d.get_json() for d in data]
         if isinstance(data, object) and hasattr(data, '__dict__'):
