@@ -1,0 +1,9 @@
+Flask_Script==2.0.6
+Flask==1.0.2
+Flask_Session==0.3.1
+Flask_Cors==3.0.7
+redis==3.2.1
+SQLAlchemy==1.2.15
+requests==2.21.0
+Flask_Sockets==0.2.1
+colorama==0.4.1
