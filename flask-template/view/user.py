@@ -5,7 +5,7 @@
 # @Date  : 2020-02-10
 # @Desc  :
 import json
-
+import flask
 from flask import Blueprint, request, session, g
 
 from common.http_util import HttpUtil
@@ -27,23 +27,16 @@ def login():
     user = session.get('user')
     if user is not None:
         user = json.loads(user)
-        g.user = User(
-            name=user.get('name'),
-            email=user.get('email'),
-            avatar=user.get('avatar'),
-            phone=user.get('phone')
-        )
-        return Response.success(status='ok', data=True)
+        g.user = User.fill_model(User(), user)
+        return flask.redirect(request.args.get('redirect') or config.FRONT_URL)
     ticket = request.args.get('ticket')
-    service = request.base_url
-    http_util = HttpUtil(url=f'{config.CAS_URL}/cas/p3/serviceValidate?format=json&service={service}&ticket={ticket}')
+    http_util = HttpUtil(
+        url=f'{config.CAS_URL}/cas/p3/serviceValidate?format=json&service={request.url}&ticket={ticket}')
     response = http_util.get()
     user = UserService.get_user_from_cas_resp(response)
     g.user = user
     session['user'] = json.dumps(user.to_dict(), ensure_ascii=False)
-    data = True
-    status = 'ok' if data else 'error'
-    return Response.success(status=status, data=data)
+    return flask.redirect(request.args.get('redirect') or config.FRONT_URL)
 
 
 @user_bp.route('/logout')

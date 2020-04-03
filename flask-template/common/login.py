@@ -11,6 +11,7 @@ from flask import session, request, g
 
 import config
 from common.response import Response
+from urllib.parse import urlencode
 from model.user import User
 
 
@@ -20,17 +21,15 @@ def login_required(func):
         user = session.get('user')
         if user is None:
             if request.referrer:
-                service = f'{config.SERVER_URL}/user/login?redirect={request.referrer}'
+                redirect = urlencode({'redirect': request.referrer})
+                service = f'{config.SERVER_URL}/user/login?{redirect}'
             else:
                 service = f'{config.SERVER_URL}/user/login'
-            redirect = f'{config.CAS_URL}/cas/login?service={service}'
-            return Response.success(status=30200, data=redirect)
+            login_url = f"{config.CAS_URL}/cas/login?{urlencode({'service': service})}"
+            return Response.success(status=30200, data=login_url)
         user = json.loads(user)
-        g.user = User(
-            name=user.get('name'),
-            email=user.get('email'),
-            avatar=user.get('avatar'),
-            phone=user.get('phone')
+        g.user = User.fill_model(
+            User(), user
         )
         return func(*args, **kwargs)
 

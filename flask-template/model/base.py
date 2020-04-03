@@ -88,3 +88,10 @@ class BaseModel:
                 continue
         result.pop('_sa_instance_state')
         return result
+
+    @classmethod
+    def fill_model(cls, model, dic):
+        for k in dic.keys():
+            if hasattr(model, k):
+                setattr(model, k, dic[k])
+        return model

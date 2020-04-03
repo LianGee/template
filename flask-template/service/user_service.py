@@ -23,5 +23,6 @@ class UserService:
                 name=attributes.get('name')[0],
                 email=attributes.get('email')[0],
                 phone=attributes.get('phone')[0],
-                avatar=attributes.get('avatar')[0]
+                avatar=attributes.get('avatar')[0],
+                id=int(attributes.get('id')[0])
             )

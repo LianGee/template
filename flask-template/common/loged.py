@@ -20,7 +20,8 @@ def log_this(func):
         params = request.args if request.method == 'GET' else request.json
         log.info(json.dumps(params, ensure_ascii=False, indent=4))
         result = func(*args, **kwargs)
-        log.info(json.dumps(result.json, ensure_ascii=False, indent=4))
+        if hasattr(result, 'json'):
+            log.info(json.dumps(result.json, ensure_ascii=False, indent=4))
         return result
 
     return wrapper
