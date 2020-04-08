@@ -1,4 +1,5 @@
 FROM harbor.bchen.xyz/library/python-36-centos7:latest
+MAINTAINER bo_bo0425@126.com
 COPY flask-template.tar ./
 RUN tar -zxvf flask-template.tar
 RUN rm -f flask-template.tar
