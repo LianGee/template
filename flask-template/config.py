@@ -9,7 +9,10 @@ import os
 
 from redis import Redis
 
-APP_NAME = 'zed'
+from common import env_util
+from common.config_util import ConfigUtil
+
+APP_NAME = 'flask-template'
 SECRET_KEY = 'XKCWJC6KN99GRZPOYDJTALF45WG3RNQ9'
 JSONIFY_PRETTYPRINT_REGULAR = True
 JSON_AS_ASCII = False
@@ -19,34 +22,26 @@ PORT = 5000
 WORKERS = 1
 FLASK_USE_RELOAD = True
 BASE_DIR = os.path.abspath(os.getcwd())
-EXCEL_PATH = BASE_DIR + '/data/excel/'
-EXCEL_EXPORT = {
-    'encoding': 'utf_8_sig',
-}
-DEFAULT_DATABASE_URL = 'mysql+mysqlconnector://root:123456@localhost:3306/zed?charset=utf8'
-DB_KWARGS = {
-    'pool_recycle': 360,
-    'pool_size': 100,
-    'max_overflow': 10,
-    'logging_name': 'sqlalchemy',
-}
+ENV = env_util.get_env()
+
+# server config
+DEFAULT_DATABASE_URL = ConfigUtil.get_str_property('DEFAULT_DATABASE_URL')
+DB_KWARGS = ConfigUtil.get_dict_property('DB_KWARGS')
 DATABASES = {
     "default": DEFAULT_DATABASE_URL,
 }
 SESSION_TYPE = 'redis'
 SESSION_REDIS = Redis(
-    host='127.0.0.1',
-    port=6379
+    host=ConfigUtil.get_str_property(key='redis.host'),
+    port=ConfigUtil.get_int_property(key='redis.port')
 )
 SESSION_USE_SIGNER = True
 SESSION_PERMANENT = True
-PERMANENT_SESSION_LIFETIME = 3600 * 24 * 30
-REDIS_CACHE = {
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_HOST': '127.0.0.1',
-    'CACHE_REDIS_PORT': 6379,
-}
+PERMANENT_SESSION_LIFETIME = ConfigUtil.get_int_property('PERMANENT_SESSION_LIFETIME')
+REDIS_CACHE = ConfigUtil.get_dict_property('REDIS_CACHE')
 
-CAS_URL = 'https://cas.bchen.xyz'
-FRONT_URL = 'http://localhost:8000'
-SERVER_URL = f'http://localhost:{PORT}'
+
+# app config key
+CAS_URL = 'cas.url'
+FRONT_URL = 'front.url'
+SERVER_URL = 'server.url'

@@ -1,7 +1,6 @@
-import { stringify } from 'querystring';
-import { history, Reducer, Effect } from 'umi';
+import { Effect, history, Reducer } from 'umi';
 
-import { fakeAccountLogin } from '@/services/login';
+import { fakeAccountLogin, logout } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -58,16 +57,10 @@ const Model: LoginModelType = {
       }
     },
 
-    logout() {
-      const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        history.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
+    *logout(_, { call }) {
+      const response = yield call(logout);
+      if (response.status === 0 && response.data !== undefined) {
+        window.location.href = response.data;
       }
     },
   },

@@ -8,6 +8,7 @@ import json
 import flask
 from flask import Blueprint, request, session, g
 
+from common.config_util import ConfigUtil
 from common.http_util import HttpUtil
 from common.log import Logger
 from common.loged import log_this
@@ -28,24 +29,25 @@ def login():
     if user is not None:
         user = json.loads(user)
         g.user = User.fill_model(User(), user)
-        return flask.redirect(request.args.get('redirect') or config.FRONT_URL)
+        return flask.redirect(request.args.get('redirect') or ConfigUtil.get_str_property(config.FRONT_URL))
     ticket = request.args.get('ticket')
     http_util = HttpUtil(
-        url=f'{config.CAS_URL}/cas/p3/serviceValidate?format=json&service={request.url}&ticket={ticket}')
+        url=f'{ConfigUtil.get_str_property(config.CAS_URL)}/cas/p3/serviceValidate?'
+        f'format=json&service={request.url}&ticket={ticket}')
     response = http_util.get()
     user = UserService.get_user_from_cas_resp(response)
     g.user = user
     session['user'] = json.dumps(user.to_dict(), ensure_ascii=False)
-    return flask.redirect(request.args.get('redirect') or config.FRONT_URL)
+    return flask.redirect(request.args.get('redirect') or ConfigUtil.get_str_property(config.FRONT_URL))
 
 
 @user_bp.route('/logout')
 @login_required
 @log_this
 def logout():
-    session.pop('user')
+    session.clear()
     g.user = None
-    return Response.success(status='error', data=True)
+    return Response.success(data=f'{ConfigUtil.get_str_property(config.CAS_URL)}/cas/logout')
 
 
 @user_bp.route('/current')

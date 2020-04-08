@@ -10,6 +10,7 @@ import json
 from flask import session, request, g
 
 import config
+from common.config_util import ConfigUtil
 from common.response import Response
 from urllib.parse import urlencode
 from model.user import User
@@ -22,10 +23,10 @@ def login_required(func):
         if user is None:
             if request.referrer:
                 redirect = urlencode({'redirect': request.referrer})
-                service = f'{config.SERVER_URL}/user/login?{redirect}'
+                service = f'{ConfigUtil.get_str_property(config.SERVER_URL)}/user/login?{redirect}'
             else:
-                service = f'{config.SERVER_URL}/user/login'
-            login_url = f"{config.CAS_URL}/cas/login?{urlencode({'service': service})}"
+                service = f'{ConfigUtil.get_str_property(config.SERVER_URL)}/user/login'
+            login_url = f"{ConfigUtil.get_str_property(config.CAS_URL)}/cas/login?{urlencode({'service': service})}"
             return Response.success(status=30200, data=login_url)
         user = json.loads(user)
         g.user = User.fill_model(

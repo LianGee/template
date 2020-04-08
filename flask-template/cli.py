@@ -55,7 +55,9 @@ def runserver(debug, no_reload, address, port, workers, socket):
         print(
             Fore.YELLOW + "Starting Zed server in " +
             Fore.RED + "DEBUG" +
-            Fore.YELLOW + " mode")
+            Fore.YELLOW + " mode ENV: " +
+            Fore.RED + config.ENV
+        )
         print(Fore.BLUE + '-=' * 20)
         print(Style.RESET_ALL)
         app.run(
