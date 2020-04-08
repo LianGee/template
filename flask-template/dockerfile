@@ -1,6 +1,6 @@
-FROM 172.17.0.4/library/python-36-centos7:latest
+FROM harbor.bchen.xyz/library/python-36-centos7:latest
 COPY * ./
 EXPOSE  5000
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
 ENV ENV DEV
 CMD python3 cli.py runserver -w 5
