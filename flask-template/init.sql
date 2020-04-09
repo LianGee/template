@@ -1,4 +1,4 @@
-create table if not exists galio.template
+create table if not exists `your_database`.`template`
 (
   id         bigint(11) auto_increment comment '主键'
     primary key,
